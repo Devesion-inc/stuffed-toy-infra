@@ -1,0 +1,62 @@
+---
+description: Azure Terraform構成のコーディング規約
+globs: providers/azure/**
+alwaysApply: false
+---
+# Azure Terraform Project Structure
+
+## Coding Conventions for Azure
+
+### 1. ファイル構造 (File Structure)
+- **メインファイル (Main File):** メインの設定ファイルは `main.tf` とする。
+- **変数ファイル (Variable File):** 入力変数は `variable.tf` に定義する。
+- **出力ファイル (Output File):** 出力値は `outputs.tf` に定義する。
+- **プロバイダファイル (Provider File):** プロバイダーの設定は `providers.tf` に定義する。
+- **モジュール (Modules):** モジュールは `module` ディレクトリに配置する。
+- **サービス分割 (Service Splitting):** モジュール内はサービスごとにファイルを分割する（例: `storage.tf`, `front_door.tf`）。
+
+### 2. インデントとフォーマット (Indentation and Formatting)
+- **インデント (Indentation):** インデントはスペース2つを使用する。
+- **ラインの長さ (Line Length):** 1行は80文字を超えないようにする。
+- **ブロック (Blocks):** ブロックの開始と終了は同じインデントレベルにする。
+
+### 3. リソースの命名規則 (Resource Naming Conventions)
+- **Azureリソース名:** `{project}-{service}-{environment}` の形式とする（例: `infra-frontdoor-develop`）。
+- **Terraformリソース名:** リソース名はスネークケース（例: `my_resource_name`）を使用する。
+- **変数名 (Variable Name):** 変数名もスネークケースを使用する。
+- **出力名 (Output Name):** 出力名もスネークケースを使用する。
+- **ストレージアカウント名:** 小文字英数字のみ、3〜24文字の制限あり。
+
+### 4. コメント (Comments)
+- **シングルラインコメント (Single-line Comments):** 単一行コメントは `#` を使用する。
+- **マルチラインコメント (Multi-line Comments):** 複数行コメントは `/* ... */` を使用する。
+
+### 5. バリアブルとアウトプット (Variables and Outputs)
+- **変数の定義 (Variable Definition):** 各変数には型、説明、デフォルト値を設定する。
+- **出力の定義 (Output Definition):** 各出力には説明を設定する。
+
+### 6. プロバイダー (Providers)
+- **バージョン固定 (Version Pinning):** azurermプロバイダーのバージョンを固定する（>= 4.66.0）。
+- **プロバイダーの設定 (Provider Configuration):** プロバイダーの設定はトップレベルの `providers.tf` に記載する。
+- **認証 (Authentication):** Azure CLI認証（`az login`）を使用する。
+
+### 7. モジュール (Modules)
+- **再利用 (Reusability):** モジュールは再利用可能な形で設計する。
+- **入力と出力 (Inputs and Outputs):** モジュールは明確な入力と出力を持つ。
+
+### 8. セキュリティ (Security)
+- **シークレット管理 (Secret Management):** シークレットは環境変数やAzure Key Vaultを使用して管理する。
+- **ローカル状態ファイル (Local State Files):** ローカル状態ファイルは機密情報を含まないようにする。
+
+### 9. バックエンド (Backend)
+- **Azure Storage Backend:** tfstateはAzure Blob Storageに保管する。
+- **リソースプロバイダー登録:** 新規サブスクリプションではMicrosoft.Storage等のプロバイダー登録が必要。
+
+### その他 (Others)
+- Terraformで作成したリソースなのか区別できるように`Build:Terraform`というタグをつける
+- 利用しているサービスレベルでファイルを分割する
+- terraform.tfvarsファイルがない場合は作成と仮の値を入れるようにする
+- 基本のリージョンはjapaneastにする
+- Storage Accountの詳細設定（パブリックアクセスブロック、TLS1.2等）まで記述する
+- Azure CDNは2025年10月に新規作成廃止のため、Azure Front Doorを使用する
+- タグは`locals.common_tags`で一元管理する

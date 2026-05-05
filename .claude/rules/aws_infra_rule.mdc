@@ -1,0 +1,112 @@
+---
+description: AWSインフラ構築ガイドライン
+globs: providers/aws/**
+alwaysApply: false
+---
+rules:
+  - category: 全般
+    description: "以下の内容を反映した構成図を作る"
+    details:
+      - AWSサービス名
+      - リージョン
+      - AWS外部と通信可能すべての経路
+  - category: コンピューティング
+    service: EC2
+    rules:
+      - description: "初期設定、SSHユーザ登録以外、インスタンス作成時作ったSSHキーを業務で使わない"
+      - description: "インバウンドルールで0.0.0.0でポート開放しない"
+      - description: "以下のCloudwatchアラームを作成"
+        details: 
+          - StatusCheckFailed(=1)
+          - CPUUtilization(>=80%)
+          - mem_used_percent(>=80%)
+          - disk_used_percent(>=80%)
+  - category: ネットワークとコンテンツ配信
+    service: Load Balancing
+    rules: 
+      - description: "インバウンドルールで0.0.0.0でポート開放しない"
+      - description: "以下のCloudwatchアラームを作成"
+        details:
+          - UnHealthyHostCount(>=1)
+  - category: セキュリティ関連
+    service: Certificate Manager
+    rules:
+      - description: "AWS側発行証明書は基本自動更新であるが、条件付き"
+        details:
+          - 更新が近い時期に以下の状態にならないこと
+          - AWSリソースとの紐づけ状態を解除
+          - ドメイン認証用レコードが無効状態になる
+  - category: データベース
+    service: RDS
+    rules:
+      - description: "パラメーターグループはデフォルトのものを使わず、新規作成したものを使う"
+      - description: "サブネットグループはプライベートサブネットのみで構成"
+      - description: "スロークエリとエラーログは出力ONにして、ファイルで保存"
+      - description: "「ストレージの自動スケーリング」を有効に設定"
+      - description: "以下のCloudwatchアラームを作成"
+        details:
+          - CPUUtilization(>=80%)
+          - FreeableMemory(<=DBインスタンスメモリの20%)
+          - FreeStorageSpace(<=ストレージ容量の20%)
+  - category: ストレージ
+    service: S3
+    rules:
+      - description: "「パブリックアクセスをすべて ブロック」をONに設定"
+  - category: セキュリティ関連
+    service: IAM
+    rules:
+      - description: "IAMユーザーを作成する場合はMFAデバイス、IP制限を設定"
+  - category: ネットワークとコンテンツ配信
+    service: VPC
+    rules:
+      - description: "VPCを新規作成してから構築(デフォルトVPCは削除)"
+        details: 
+          - 既にデフォルトVPCで構築した場合はデフォルトSGを使わない
+      - description: "publicとprivate subnet groupを2AZ以上カバーできるように作成"
+  - category: セキュリティ関連
+    service: WAF
+    rules:
+      - description: "マネージドルールを使って本番環境でアクションを「block」にする場合、「count」で誤作動ないかを確認後設定"
+      - description: "設定ルールに対して保管期間付き(暫定1年)でログ出力を設定"
+        details:
+          - 全ログが対象
+  - category: セキュリティ関連
+    service: GuardDuty
+    rules:
+      - description: "全初期有効リージョンで有効化"
+  - category: メッセージング
+    service: SES
+    rules:
+      - description: "以下のCloudwatchアラームを作成"
+        details:
+          - Reputation.BounceRate(>=0.075)
+          - Reputation.ComplaintRate(>=0.003)
+  - category: セキュリティ関連
+    service: ElasticCache (Redis)
+    rules:
+      - description: "以下のCloudwatchアラームを作成"
+        details:
+          - EngineCPUUtilization(>=90%)
+          - FreeableMemory(<=ノードメモリの20%)
+  - category: コンピューティング
+    service: ECS
+    rules:
+      - description: "以下のCloudwatchアラームを作成"
+        details:
+          - サービスのCPUUtilization(>=80%)
+          - サービスのMemoryUtilization(>=80%)
+  - category: 管理とガバナンス
+    service: Health Dashboard
+    rules:
+      - description: "以下のイベントに対してSlack通知を作成"
+        details:
+          - アカウント固有のイベント
+  - category: セキュリティ関連
+    service: CloudTrail
+    rules:
+      - description: "ONになっていることを確認"
+  - category: セキュリティ関連
+    service: Security Hub
+    rules:
+      - description: "全リージョン有効化、検出結果を東京リージョンに集約"
+      - description: "東京リージョンで検出結果に対して、SNS通知を作成"
