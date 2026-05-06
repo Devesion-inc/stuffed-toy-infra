@@ -11,6 +11,8 @@ resource "aws_security_group" "stuffed_toy_db" {
     security_groups = [
       aws_security_group.stuffed_toy_api_app_ecs_main.id,
       aws_security_group.stuffed_toy_api_app_ecs_sub.id,
+      aws_security_group.stuffed_toy_relay_ecs_main.id,
+      aws_security_group.stuffed_toy_relay_ecs_sub.id,
     ]
   }
 
@@ -21,11 +23,15 @@ resource "aws_security_group" "stuffed_toy_db" {
     security_groups = [
       aws_security_group.stuffed_toy_api_app_ecs_main.id,
       aws_security_group.stuffed_toy_api_app_ecs_sub.id,
+      aws_security_group.stuffed_toy_relay_ecs_main.id,
+      aws_security_group.stuffed_toy_relay_ecs_sub.id,
     ]
   }
 
   depends_on = [
     aws_security_group.stuffed_toy_api_app_ecs_main,
     aws_security_group.stuffed_toy_api_app_ecs_sub,
+    aws_security_group.stuffed_toy_relay_ecs_main,
+    aws_security_group.stuffed_toy_relay_ecs_sub,
   ]
 }

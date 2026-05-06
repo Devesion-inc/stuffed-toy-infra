@@ -16,5 +16,6 @@ variable "public_subnet_ids" {}
 variable "private_subnet_ids" {}
 
 # load balancer
-variable "stuffed_toy_custom_header_value" {}
+variable "stuffed_toy_api_custom_header_value" {}
+variable "stuffed_toy_relay_custom_header_value" {}
 variable "stuffed_toy_acm_arn" {}

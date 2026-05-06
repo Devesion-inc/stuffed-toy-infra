@@ -25,5 +25,6 @@ private_subnet_ids = [
 ]
 
 # load balancer
-stuffed_toy_custom_header_value = "65wKHnB4E31G"
-stuffed_toy_acm_arn             = "" # 空文字なら HTTP (80/8080)、ARN を入れると HTTPS (443/8443) に切り替わる
+stuffed_toy_api_custom_header_value   = "65wKHnB4E31G"
+stuffed_toy_relay_custom_header_value = "Ir4JXslYDuTu"
+stuffed_toy_acm_arn                   = "" # 空文字なら HTTP (80/8080)、ARN を入れると HTTPS (443/8443) に切り替わる
