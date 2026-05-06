@@ -21,7 +21,6 @@ AWS_PROFILE="stuffed-toy-local-deployer-$ENV"
 
 # リソース名の設定
 S3_BUCKET_NAME="stuffed-toy-terraform-state-$ENV"
-DYNAMODB_TABLE_NAME="stuffed-toy-terraform-locks-$ENV"
 REGION="ap-northeast-1"
 
 echo "=========================================="
@@ -107,77 +106,27 @@ else
 fi
 echo "End S3 Bucket Creation"
 
-echo "Start DynamoDB Table Creation"
-# DynamoDBテーブルの存在確認
-if aws dynamodb describe-table --table-name ${DYNAMODB_TABLE_NAME} --profile ${AWS_PROFILE} --region ${REGION} > /dev/null 2>&1; then
-    echo "DynamoDB table '${DYNAMODB_TABLE_NAME}' already exists"
-else
-    echo "Creating DynamoDB table: ${DYNAMODB_TABLE_NAME}"
-    
-    # DynamoDBテーブル作成
-    if aws dynamodb create-table \
-        --table-name ${DYNAMODB_TABLE_NAME} \
-        --attribute-definitions AttributeName=LockID,AttributeType=S \
-        --key-schema AttributeName=LockID,KeyType=HASH \
-        --billing-mode PAY_PER_REQUEST \
-        --region ${REGION} \
-        --profile ${AWS_PROFILE} > /dev/null 2>&1; then
-        echo "DynamoDB table created successfully"
-        
-        # テーブルがアクティブになるまで待機（タイムアウト付き）
-        echo "Waiting for DynamoDB table to become active..."
-        
-        # 最大30回（約3分）待機
-        for i in {1..30}; do
-            TABLE_STATUS=$(aws dynamodb describe-table \
-                --table-name ${DYNAMODB_TABLE_NAME} \
-                --region ${REGION} \
-                --profile ${AWS_PROFILE} \
-                --query 'Table.TableStatus' \
-                --output text 2>/dev/null || echo "ERROR")
-            
-            if [ "$TABLE_STATUS" = "ACTIVE" ]; then
-                echo "DynamoDB table is now active"
-                break
-            elif [ "$TABLE_STATUS" = "ERROR" ]; then
-                echo "Error: Could not check table status"
-                exit 1
-            else
-                echo "Table status: $TABLE_STATUS (attempt $i/30)"
-                sleep 6
-            fi
-            
-            if [ $i -eq 30 ]; then
-                echo "Warning: Table may not be fully active yet, but creation was successful"
-                echo "You can check the status manually with: aws dynamodb describe-table --table-name ${DYNAMODB_TABLE_NAME} --region ${REGION} --profile ${AWS_PROFILE}"
-            fi
-        done
-    else
-        echo "Error: Failed to create DynamoDB table"
-        exit 1
-    fi
-fi
-echo "End DynamoDB Table Creation"
-
 echo "=========================================="
 echo "Backend Setup Completed Successfully!"
 echo "=========================================="
 echo ""
 echo "Resources created:"
 echo "- S3 Bucket: ${S3_BUCKET_NAME}"
-echo "- DynamoDB Table: ${DYNAMODB_TABLE_NAME}"
 echo "- Region: ${REGION}"
 echo "- AWS Profile: ${AWS_PROFILE}"
+echo ""
+echo "State locking is handled natively by S3 (use_lockfile = true)."
+echo "DynamoDB table is no longer required (Terraform >= 1.10)."
 echo ""
 echo "You can now configure your Terraform backend with these resources:"
 echo ""
 echo "terraform {"
 echo "  backend \"s3\" {"
-echo "    bucket         = \"${S3_BUCKET_NAME}\""
-echo "    key            = \"terraform.tfstate\""
-echo "    region         = \"${REGION}\""
-echo "    dynamodb_table = \"${DYNAMODB_TABLE_NAME}\""
-echo "    profile        = \"${AWS_PROFILE}\""
+echo "    bucket       = \"${S3_BUCKET_NAME}\""
+echo "    key          = \"terraform.tfstate\""
+echo "    region       = \"${REGION}\""
+echo "    profile      = \"${AWS_PROFILE}\""
+echo "    use_lockfile = true"
 echo "  }"
 echo "}"
 echo ""

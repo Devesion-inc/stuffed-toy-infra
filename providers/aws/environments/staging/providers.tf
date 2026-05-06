@@ -1,20 +1,20 @@
 
 terraform {
-  required_version = "= 1.14.3"
+  required_version = "= 1.15.1"
 
   backend "s3" {
     bucket = "stuffed-toy-terraform-state-staging"
     region = "ap-northeast-1"
     # keyは環境で一意にすること
-    key            = "staging/terraform.tfstate"
-    profile        = "stuffed-toy-local-deployer-staging"
-    dynamodb_table = "stuffed-toy-terraform-locks-staging"
+    key          = "staging/terraform.tfstate"
+    profile      = "stuffed-toy-local-deployer-staging"
+    use_lockfile = true
   }
 
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 6.27.0"
+      version = "= 6.43.0"
     }
   }
 }

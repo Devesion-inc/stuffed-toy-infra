@@ -7,7 +7,7 @@ set -eu
 CURRENT=$(cd $(dirname $0);pwd)
 ENV=`echo "$CURRENT" | sed -e 's/.*\/\([^\/]*\)$/\1/'`
 
-TF_VERSION=1.14.3
+TF_VERSION=1.15.1
 
 echo "Start Directry Check"
 if [ $ENV = "develop" ] || [ $ENV = "staging" ] || [ $ENV = "preview" ] || [ $ENV = "production" ] || [ $ENV = "beta" ]; then
