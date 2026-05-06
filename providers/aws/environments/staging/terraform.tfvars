@@ -28,3 +28,7 @@ private_subnet_ids = [
 stuffed_toy_api_custom_header_value   = "65wKHnB4E31G"
 stuffed_toy_relay_custom_header_value = "Ir4JXslYDuTu"
 stuffed_toy_acm_arn                   = "" # 空文字なら HTTP (80/8080)、ARN を入れると HTTPS (443/8443) に切り替わる
+
+# cloudfront
+stuffed_toy_cloudfront_acm_arn = "" # us-east-1 の ACM 証明書 ARN（空ならデフォルト証明書）
+stuffed_toy_aliases            = [] # CloudFront の代替ドメイン名（ACM 設定時のみ使用）

@@ -97,3 +97,29 @@ module "stuffed_toy_iam_role" {
   stuffed_toy_relay_ecs_exec_aws_iam_policy_arn          = module.stuffed_toy_iam_policy.stuffed_toy_relay_ecs_exec_aws_iam_policy_arn
   stuffed_toy_relay_ecs_task_aws_iam_policy_arn          = module.stuffed_toy_iam_policy.stuffed_toy_relay_ecs_task_aws_iam_policy_arn
 }
+
+module "stuffed_toy_cloudfront" {
+  source = "../../module/cloudfront"
+
+  env_value_environment = var.env_value_environment
+
+  stuffed_toy_cloudfront_acm_arn = var.stuffed_toy_cloudfront_acm_arn
+  stuffed_toy_aliases            = var.stuffed_toy_aliases
+  lb_https_enabled               = var.stuffed_toy_acm_arn != ""
+
+  stuffed_toy_app_cloudfront_aws_wafv2_web_acl_arn = module.stuffed_toy_waf.stuffed_toy_app_cloudfront_aws_wafv2_web_acl_arn
+
+  stuffed_toy_app_storage_aws_s3_bucket_id                   = module.stuffed_toy_s3_bucket.stuffed_toy_app_storage_aws_s3_bucket_id
+  stuffed_toy_app_storage_aws_s3_bucket_regional_domain_name = module.stuffed_toy_s3_bucket.stuffed_toy_app_storage_aws_s3_bucket_regional_domain_name
+  stuffed_toy_app_cloudfront_log_aws_s3_bucket_arn           = module.stuffed_toy_s3_bucket.stuffed_toy_app_cloudfront_log_aws_s3_bucket_arn
+
+  stuffed_toy_api_load_balancer_dns_name = module.stuffed_toy_lb.stuffed_toy_api_load_balancer_dns_name
+  stuffed_toy_api_custom_header_value    = var.stuffed_toy_api_custom_header_value
+
+  stuffed_toy_relay_load_balancer_dns_name = module.stuffed_toy_lb.stuffed_toy_relay_load_balancer_dns_name
+  stuffed_toy_relay_custom_header_value    = var.stuffed_toy_relay_custom_header_value
+
+  providers = {
+    aws = aws.virginia
+  }
+}

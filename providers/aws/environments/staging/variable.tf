@@ -19,3 +19,12 @@ variable "private_subnet_ids" {}
 variable "stuffed_toy_api_custom_header_value" {}
 variable "stuffed_toy_relay_custom_header_value" {}
 variable "stuffed_toy_acm_arn" {}
+
+# cloudfront
+variable "stuffed_toy_cloudfront_acm_arn" {
+  default = ""
+}
+variable "stuffed_toy_aliases" {
+  type    = list(string)
+  default = []
+}

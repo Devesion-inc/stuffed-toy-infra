@@ -8,6 +8,7 @@ resource "aws_lb" "stuffed_toy_api" {
   load_balancer_type = "application"
   security_groups    = var.stuffed_toy_api_loadbalancer_security_groups
   subnets            = var.subnet_ids
+  idle_timeout       = 300 # NDJSON streaming を考慮し延長
   access_logs {
     bucket  = var.stuffed_toy_api_elb_log_aws_s3_bucket_id
     enabled = true
@@ -108,6 +109,7 @@ resource "aws_lb" "stuffed_toy_relay" {
   load_balancer_type = "application"
   security_groups    = var.stuffed_toy_relay_loadbalancer_security_groups
   subnets            = var.subnet_ids
+  idle_timeout       = 300 # WebSocket の長時間接続維持のため延長
   access_logs {
     bucket  = var.stuffed_toy_api_elb_log_aws_s3_bucket_id
     enabled = true
