@@ -5,8 +5,8 @@ resource "aws_security_group" "stuffed_toy_api_app_ecs_main" {
   vpc_id      = var.vpc_id
 
   ingress {
-    from_port       = 8000
-    to_port         = 8000
+    from_port       = 3002
+    to_port         = 3002
     protocol        = "tcp"
     security_groups = [aws_security_group.stuffed_toy_api_loadbalancer_main.id]
   }
@@ -28,8 +28,8 @@ resource "aws_security_group" "stuffed_toy_api_app_ecs_sub" {
   vpc_id      = var.vpc_id
 
   ingress {
-    from_port       = 8000
-    to_port         = 8000
+    from_port       = 3002
+    to_port         = 3002
     protocol        = "tcp"
     security_groups = [aws_security_group.stuffed_toy_api_loadbalancer_sub.id]
   }

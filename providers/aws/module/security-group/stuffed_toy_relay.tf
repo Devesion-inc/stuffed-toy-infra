@@ -5,8 +5,8 @@ resource "aws_security_group" "stuffed_toy_relay_ecs_main" {
   vpc_id      = var.vpc_id
 
   ingress {
-    from_port       = 9000
-    to_port         = 9000
+    from_port       = 3001
+    to_port         = 3001
     protocol        = "tcp"
     security_groups = [aws_security_group.stuffed_toy_relay_loadbalancer_main.id]
   }
@@ -28,8 +28,8 @@ resource "aws_security_group" "stuffed_toy_relay_ecs_sub" {
   vpc_id      = var.vpc_id
 
   ingress {
-    from_port       = 9000
-    to_port         = 9000
+    from_port       = 3001
+    to_port         = 3001
     protocol        = "tcp"
     security_groups = [aws_security_group.stuffed_toy_relay_loadbalancer_sub.id]
   }

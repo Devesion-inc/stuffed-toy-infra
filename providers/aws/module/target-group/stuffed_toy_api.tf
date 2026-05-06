@@ -9,7 +9,7 @@ locals {
 resource "aws_lb_target_group" "stuffed_toy_api_blue" {
   # nameは32文字を超えるとエラーになるので注意
   name        = "stuffed-toy-api-blue-${local.env_short[var.env_value_environment]}"
-  port        = 8000
+  port        = 3002
   protocol    = "HTTP"
   target_type = "ip"
   vpc_id      = var.vpc_id
@@ -28,7 +28,7 @@ resource "aws_lb_target_group" "stuffed_toy_api_blue" {
 resource "aws_lb_target_group" "stuffed_toy_api_green" {
   # nameは32文字を超えるとエラーになるので注意
   name        = "stuffed-toy-api-green-${local.env_short[var.env_value_environment]}"
-  port        = 8000
+  port        = 3002
   protocol    = "HTTP"
   target_type = "ip"
   vpc_id      = var.vpc_id
