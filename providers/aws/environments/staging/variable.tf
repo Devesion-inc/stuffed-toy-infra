@@ -28,3 +28,11 @@ variable "stuffed_toy_aliases" {
   type    = list(string)
   default = []
 }
+
+# rds
+variable "stuffed_toy_rds_availability_zones" {
+  type = list(string)
+}
+variable "stuffed_toy_rds_instance_class" {}
+variable "stuffed_toy_rds_reader_capacity_min" {}
+variable "stuffed_toy_rds_reader_capacity_max" {}

@@ -32,3 +32,9 @@ stuffed_toy_acm_arn                   = "" # 空文字なら HTTP (80/8080)、AR
 # cloudfront
 stuffed_toy_cloudfront_acm_arn = "" # us-east-1 の ACM 証明書 ARN（空ならデフォルト証明書）
 stuffed_toy_aliases            = [] # CloudFront の代替ドメイン名（ACM 設定時のみ使用）
+
+# rds
+stuffed_toy_rds_availability_zones  = ["ap-northeast-1a", "ap-northeast-1c", "ap-northeast-1d"]
+stuffed_toy_rds_instance_class      = "db.t4g.medium"
+stuffed_toy_rds_reader_capacity_min = 0 # staging はリードレプリカなし。本番は 1 以上推奨
+stuffed_toy_rds_reader_capacity_max = 0

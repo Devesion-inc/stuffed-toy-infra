@@ -123,3 +123,15 @@ module "stuffed_toy_cloudfront" {
     aws = aws.virginia
   }
 }
+
+module "stuffed_toy_rds" {
+  source = "../../module/rds"
+
+  env_value_environment               = var.env_value_environment
+  subnet_ids                          = var.private_subnet_ids
+  stuffed_toy_rds_security_group_ids  = [module.stuffed_toy_security_group.stuffed_toy_db_aws_security_group_id]
+  stuffed_toy_rds_availability_zones  = var.stuffed_toy_rds_availability_zones
+  stuffed_toy_rds_instance_class      = var.stuffed_toy_rds_instance_class
+  stuffed_toy_rds_reader_capacity_min = var.stuffed_toy_rds_reader_capacity_min
+  stuffed_toy_rds_reader_capacity_max = var.stuffed_toy_rds_reader_capacity_max
+}
