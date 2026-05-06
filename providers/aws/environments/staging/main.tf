@@ -135,3 +135,21 @@ module "stuffed_toy_rds" {
   stuffed_toy_rds_reader_capacity_min = var.stuffed_toy_rds_reader_capacity_min
   stuffed_toy_rds_reader_capacity_max = var.stuffed_toy_rds_reader_capacity_max
 }
+
+module "stuffed_toy_secrets_manager" {
+  source = "../../module/secrets-manager"
+
+  env_value_environment = var.env_value_environment
+}
+
+module "stuffed_toy_ecr" {
+  source = "../../module/ecr"
+
+  env_value_environment = var.env_value_environment
+}
+
+module "stuffed_toy_ecs_cluster" {
+  source = "../../module/ecs/cluster"
+
+  env_value_environment = var.env_value_environment
+}
