@@ -30,9 +30,25 @@ variable "stuffed_toy_aliases" {
 }
 
 # rds
-variable "stuffed_toy_rds_availability_zones" {
-  type = list(string)
-}
 variable "stuffed_toy_rds_instance_class" {}
-variable "stuffed_toy_rds_reader_capacity_min" {}
-variable "stuffed_toy_rds_reader_capacity_max" {}
+
+# ecs service
+variable "stuffed_toy_api_aws_ecs_task_definition_arn" {}
+variable "stuffed_toy_api_ecs_min_capacity" {
+  default = 1
+}
+variable "stuffed_toy_api_ecs_max_capacity" {
+  default = 3
+}
+variable "stuffed_toy_relay_aws_ecs_task_definition_arn" {}
+variable "stuffed_toy_relay_ecs_min_capacity" {
+  default = 1
+}
+variable "stuffed_toy_relay_ecs_max_capacity" {
+  default = 3
+}
+
+# codepipeline
+variable "codeconnection_arn" {}
+variable "stuffed_toy_api_github_repository" {}
+variable "stuffed_toy_relay_github_repository" {}

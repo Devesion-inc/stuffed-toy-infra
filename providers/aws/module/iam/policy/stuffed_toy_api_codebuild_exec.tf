@@ -24,7 +24,10 @@ resource "aws_iam_policy" "stuffed_toy_api_codebuild_exec" {
         Effect = "Allow"
         Resource = [
           "arn:aws:logs:ap-northeast-1:${var.account_id}:log-group:/aws/codebuild/stuffed-toy-api-${var.env_value_environment}-build-project",
-          "arn:aws:logs:ap-northeast-1:${var.account_id}:log-group:/aws/codebuild/stuffed-toy-api-${var.env_value_environment}-build-project:*"
+          "arn:aws:logs:ap-northeast-1:${var.account_id}:log-group:/aws/codebuild/stuffed-toy-api-${var.env_value_environment}-build-project:*",
+          # migrate CodeBuild プロジェクトのログ
+          "arn:aws:logs:ap-northeast-1:${var.account_id}:log-group:/aws/codebuild/stuffed-toy-api-migrate-${var.env_value_environment}-build-project",
+          "arn:aws:logs:ap-northeast-1:${var.account_id}:log-group:/aws/codebuild/stuffed-toy-api-migrate-${var.env_value_environment}-build-project:*"
         ]
       },
       {

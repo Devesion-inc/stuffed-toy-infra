@@ -127,13 +127,10 @@ module "stuffed_toy_cloudfront" {
 module "stuffed_toy_rds" {
   source = "../../module/rds"
 
-  env_value_environment               = var.env_value_environment
-  subnet_ids                          = var.private_subnet_ids
-  stuffed_toy_rds_security_group_ids  = [module.stuffed_toy_security_group.stuffed_toy_db_aws_security_group_id]
-  stuffed_toy_rds_availability_zones  = var.stuffed_toy_rds_availability_zones
-  stuffed_toy_rds_instance_class      = var.stuffed_toy_rds_instance_class
-  stuffed_toy_rds_reader_capacity_min = var.stuffed_toy_rds_reader_capacity_min
-  stuffed_toy_rds_reader_capacity_max = var.stuffed_toy_rds_reader_capacity_max
+  env_value_environment              = var.env_value_environment
+  subnet_ids                         = var.private_subnet_ids
+  stuffed_toy_rds_security_group_ids = [module.stuffed_toy_security_group.stuffed_toy_db_aws_security_group_id]
+  stuffed_toy_rds_instance_class     = var.stuffed_toy_rds_instance_class
 }
 
 module "stuffed_toy_secrets_manager" {
@@ -152,4 +149,112 @@ module "stuffed_toy_ecs_cluster" {
   source = "../../module/ecs/cluster"
 
   env_value_environment = var.env_value_environment
+}
+
+module "stuffed_toy_sns_topic" {
+  source = "../../module/sns-topic"
+
+  env_value_environment = var.env_value_environment
+  account_id            = var.account_id
+}
+
+module "stuffed_toy_ecs_service" {
+  source = "../../module/ecs/service"
+
+  env_value_environment = var.env_value_environment
+  subnet_ids            = var.public_subnet_ids
+
+  # api
+  stuffed_toy_api_aws_ecs_task_definition_arn  = var.stuffed_toy_api_aws_ecs_task_definition_arn
+  stuffed_toy_api_aws_ecs_cluster_id           = module.stuffed_toy_ecs_cluster.stuffed_toy_aws_ecs_cluster_id
+  stuffed_toy_api_aws_ecs_cluster_name         = module.stuffed_toy_ecs_cluster.stuffed_toy_aws_ecs_cluster_name
+  stuffed_toy_api_blue_aws_lb_target_group_arn = module.stuffed_toy_target_group.stuffed_toy_api_blue_aws_lb_target_group_arn
+  stuffed_toy_api_ecs_security_groups = [
+    module.stuffed_toy_security_group.stuffed_toy_api_app_ecs_main_aws_security_group_id,
+    module.stuffed_toy_security_group.stuffed_toy_api_app_ecs_sub_aws_security_group_id,
+  ]
+  stuffed_toy_api_ecs_min_capacity = var.stuffed_toy_api_ecs_min_capacity
+  stuffed_toy_api_ecs_max_capacity = var.stuffed_toy_api_ecs_max_capacity
+
+  # relay
+  stuffed_toy_relay_aws_ecs_task_definition_arn  = var.stuffed_toy_relay_aws_ecs_task_definition_arn
+  stuffed_toy_relay_aws_ecs_cluster_id           = module.stuffed_toy_ecs_cluster.stuffed_toy_aws_ecs_cluster_id
+  stuffed_toy_relay_aws_ecs_cluster_name         = module.stuffed_toy_ecs_cluster.stuffed_toy_aws_ecs_cluster_name
+  stuffed_toy_relay_blue_aws_lb_target_group_arn = module.stuffed_toy_target_group.stuffed_toy_relay_blue_aws_lb_target_group_arn
+  stuffed_toy_relay_ecs_security_groups = [
+    module.stuffed_toy_security_group.stuffed_toy_relay_ecs_main_aws_security_group_id,
+    module.stuffed_toy_security_group.stuffed_toy_relay_ecs_sub_aws_security_group_id,
+  ]
+  stuffed_toy_relay_ecs_min_capacity = var.stuffed_toy_relay_ecs_min_capacity
+  stuffed_toy_relay_ecs_max_capacity = var.stuffed_toy_relay_ecs_max_capacity
+}
+
+module "stuffed_toy_codebuild" {
+  source = "../../module/codebuild"
+
+  env_value_environment = var.env_value_environment
+  account_id            = var.account_id
+
+  stuffed_toy_api_codebuild_exec_aws_iam_role_arn         = module.stuffed_toy_iam_role.stuffed_toy_api_codebuild_exec_aws_iam_role_arn
+  stuffed_toy_api_migrate_codebuild_exec_aws_iam_role_arn = module.stuffed_toy_iam_role.stuffed_toy_api_codebuild_exec_aws_iam_role_arn
+  stuffed_toy_relay_codebuild_exec_aws_iam_role_arn       = module.stuffed_toy_iam_role.stuffed_toy_relay_codebuild_exec_aws_iam_role_arn
+}
+
+module "stuffed_toy_codedeploy" {
+  source = "../../module/codedeploy"
+
+  env_value_environment = var.env_value_environment
+
+  # api
+  stuffed_toy_api_codedeploy_exec_aws_iam_role_arn = module.stuffed_toy_iam_role.stuffed_toy_api_codedeploy_exec_aws_iam_role_arn
+  stuffed_toy_api_ecs_cluster_name                 = module.stuffed_toy_ecs_cluster.stuffed_toy_aws_ecs_cluster_name
+  stuffed_toy_api_ecs_service_name                 = module.stuffed_toy_ecs_service.stuffed_toy_api_aws_ecs_service_name
+  stuffed_toy_api_lb_listener_main_arn             = module.stuffed_toy_lb.stuffed_toy_api_main_aws_lb_listener_arn
+  stuffed_toy_api_lb_listener_sub_arn              = module.stuffed_toy_lb.stuffed_toy_api_sub_aws_lb_listener_arn
+  stuffed_toy_api_blue_target_group_name           = module.stuffed_toy_target_group.stuffed_toy_api_blue_aws_lb_target_group_name
+  stuffed_toy_api_green_target_group_name          = module.stuffed_toy_target_group.stuffed_toy_api_green_aws_lb_target_group_name
+
+  # relay
+  stuffed_toy_relay_codedeploy_exec_aws_iam_role_arn = module.stuffed_toy_iam_role.stuffed_toy_relay_codedeploy_exec_aws_iam_role_arn
+  stuffed_toy_relay_ecs_cluster_name                 = module.stuffed_toy_ecs_cluster.stuffed_toy_aws_ecs_cluster_name
+  stuffed_toy_relay_ecs_service_name                 = module.stuffed_toy_ecs_service.stuffed_toy_relay_aws_ecs_service_name
+  stuffed_toy_relay_lb_listener_main_arn             = module.stuffed_toy_lb.stuffed_toy_relay_main_aws_lb_listener_arn
+  stuffed_toy_relay_lb_listener_sub_arn              = module.stuffed_toy_lb.stuffed_toy_relay_sub_aws_lb_listener_arn
+  stuffed_toy_relay_blue_target_group_name           = module.stuffed_toy_target_group.stuffed_toy_relay_blue_aws_lb_target_group_name
+  stuffed_toy_relay_green_target_group_name          = module.stuffed_toy_target_group.stuffed_toy_relay_green_aws_lb_target_group_name
+}
+
+module "stuffed_toy_codepipeline" {
+  source = "../../module/codepipeline"
+
+  env_value_environment                 = var.env_value_environment
+  codeconnection_arn                    = var.codeconnection_arn
+  stuffed_toy_codepipeline_s3_bucket_id = module.stuffed_toy_s3_bucket.stuffed_toy_build_aws_s3_bucket_id
+
+  # api
+  stuffed_toy_api_codepipeline_exec_aws_iam_role_arn = module.stuffed_toy_iam_role.stuffed_toy_api_codepipeline_exec_aws_iam_role_arn
+  stuffed_toy_api_github_repository                  = var.stuffed_toy_api_github_repository
+  stuffed_toy_api_codebuild_project_name             = module.stuffed_toy_codebuild.stuffed_toy_api_codebuild_project_name
+  stuffed_toy_api_migrate_codebuild_project_name     = module.stuffed_toy_codebuild.stuffed_toy_api_migrate_codebuild_project_name
+  stuffed_toy_api_build_aws_sns_topic_arn            = module.stuffed_toy_sns_topic.stuffed_toy_api_build_aws_sns_topic_arn
+  stuffed_toy_api_ecs_subnet_ids                     = var.public_subnet_ids
+  stuffed_toy_api_ecs_security_groups = [
+    module.stuffed_toy_security_group.stuffed_toy_api_app_ecs_main_aws_security_group_id,
+    module.stuffed_toy_security_group.stuffed_toy_api_app_ecs_sub_aws_security_group_id,
+  ]
+  stuffed_toy_api_aws_codedeploy_app_name              = module.stuffed_toy_codedeploy.stuffed_toy_api_aws_codedeploy_app_name
+  stuffed_toy_api_aws_codedeploy_deployment_group_name = module.stuffed_toy_codedeploy.stuffed_toy_api_aws_codedeploy_deployment_group_name
+
+  # relay
+  stuffed_toy_relay_codepipeline_exec_aws_iam_role_arn = module.stuffed_toy_iam_role.stuffed_toy_relay_codepipeline_exec_aws_iam_role_arn
+  stuffed_toy_relay_github_repository                  = var.stuffed_toy_relay_github_repository
+  stuffed_toy_relay_codebuild_project_name             = module.stuffed_toy_codebuild.stuffed_toy_relay_codebuild_project_name
+  stuffed_toy_relay_build_aws_sns_topic_arn            = module.stuffed_toy_sns_topic.stuffed_toy_relay_build_aws_sns_topic_arn
+  stuffed_toy_relay_ecs_subnet_ids                     = var.public_subnet_ids
+  stuffed_toy_relay_ecs_security_groups = [
+    module.stuffed_toy_security_group.stuffed_toy_relay_ecs_main_aws_security_group_id,
+    module.stuffed_toy_security_group.stuffed_toy_relay_ecs_sub_aws_security_group_id,
+  ]
+  stuffed_toy_relay_aws_codedeploy_app_name              = module.stuffed_toy_codedeploy.stuffed_toy_relay_aws_codedeploy_app_name
+  stuffed_toy_relay_aws_codedeploy_deployment_group_name = module.stuffed_toy_codedeploy.stuffed_toy_relay_aws_codedeploy_deployment_group_name
 }

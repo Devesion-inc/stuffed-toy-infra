@@ -16,15 +16,14 @@ resource "random_password" "stuffed_toy_db" {
 resource "aws_secretsmanager_secret_version" "stuffed_toy_db" {
   secret_id = aws_secretsmanager_secret.stuffed_toy_db.id
   secret_string = jsonencode({
-    username           = var.stuffed_toy_rds_username
-    password           = random_password.stuffed_toy_db.result
-    engine             = var.stuffed_toy_rds_engine
-    dbname             = var.stuffed_toy_rds_name
-    host               = aws_rds_cluster.stuffed_toy_db.endpoint
-    port               = "5432"
-    writer_endpoint    = aws_rds_cluster.stuffed_toy_db.endpoint
-    reader_endpoint    = aws_rds_cluster.stuffed_toy_db.reader_endpoint
-    cluster_identifier = "stuffed-toy-cluster-${var.env_value_environment}"
-    sslmode            = var.stuffed_toy_rds_sslmode
+    username   = var.stuffed_toy_rds_username
+    password   = random_password.stuffed_toy_db.result
+    engine     = var.stuffed_toy_rds_engine
+    dbname     = var.stuffed_toy_rds_name
+    host       = aws_db_instance.stuffed_toy_db.address
+    port       = "5432"
+    endpoint   = aws_db_instance.stuffed_toy_db.endpoint
+    identifier = aws_db_instance.stuffed_toy_db.identifier
+    sslmode    = var.stuffed_toy_rds_sslmode
   })
 }
