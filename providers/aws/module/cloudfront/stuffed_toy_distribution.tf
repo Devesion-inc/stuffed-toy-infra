@@ -31,7 +31,14 @@ resource "aws_cloudfront_distribution" "stuffed_toy" {
 
   # ===== Origins =====
 
-  # S3 app_storage (default origin: Playground UI 静的配信)
+  # S3 frontend (default origin: 静的フロントエンド配信)
+  origin {
+    domain_name              = var.stuffed_toy_frontend_aws_s3_bucket_regional_domain_name
+    origin_id                = var.stuffed_toy_frontend_aws_s3_bucket_id
+    origin_access_control_id = aws_cloudfront_origin_access_control.stuffed_toy_frontend.id
+  }
+
+  # S3 app_storage (任意の素材配信用、default ではない)
   origin {
     domain_name              = var.stuffed_toy_app_storage_aws_s3_bucket_regional_domain_name
     origin_id                = var.stuffed_toy_app_storage_aws_s3_bucket_id
@@ -118,15 +125,21 @@ resource "aws_cloudfront_distribution" "stuffed_toy" {
     # WebSocket は接続中にレスポンスヘッダを書き換えると壊れる場合があるため response_headers_policy は付けない
   }
 
-  # default → S3 app_storage（Playground UI）
+  # default → S3 frontend（静的フロントエンド配信）
   default_cache_behavior {
     allowed_methods            = ["GET", "HEAD"]
     cached_methods             = ["GET", "HEAD"]
-    target_origin_id           = var.stuffed_toy_app_storage_aws_s3_bucket_id
+    target_origin_id           = var.stuffed_toy_frontend_aws_s3_bucket_id
     cache_policy_id            = data.aws_cloudfront_cache_policy.caching_optimized.id
     compress                   = true
     viewer_protocol_policy     = "redirect-to-https"
     response_headers_policy_id = aws_cloudfront_response_headers_policy.stuffed_toy_security_headers.id
+
+    # /about → /about/index.html などの URI 書き換え
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.stuffed_toy_index_rewrite.arn
+    }
   }
 
   restrictions {

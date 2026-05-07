@@ -14,3 +14,7 @@ variable "stuffed_toy_relay_codedeploy_exec_aws_iam_policy_arn" {}
 variable "stuffed_toy_relay_codepipeline_exec_aws_iam_policy_arn" {}
 variable "stuffed_toy_relay_ecs_exec_aws_iam_policy_arn" {}
 variable "stuffed_toy_relay_ecs_task_aws_iam_policy_arn" {}
+
+# frontend
+variable "stuffed_toy_frontend_codebuild_exec_aws_iam_policy_arn" {}
+variable "stuffed_toy_frontend_codepipeline_exec_aws_iam_policy_arn" {}

@@ -25,3 +25,9 @@ variable "stuffed_toy_relay_ecs_subnet_ids" {}
 variable "stuffed_toy_relay_ecs_security_groups" {}
 variable "stuffed_toy_relay_aws_codedeploy_app_name" {}
 variable "stuffed_toy_relay_aws_codedeploy_deployment_group_name" {}
+
+# frontend
+variable "stuffed_toy_frontend_codepipeline_exec_aws_iam_role_arn" {}
+variable "stuffed_toy_frontend_github_repository" {}
+variable "stuffed_toy_frontend_codebuild_project_name" {}
+variable "stuffed_toy_frontend_build_aws_sns_topic_arn" {}

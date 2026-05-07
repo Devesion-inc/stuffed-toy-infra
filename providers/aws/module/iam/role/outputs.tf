@@ -32,3 +32,11 @@ output "stuffed_toy_relay_codedeploy_exec_aws_iam_role_arn" {
 output "stuffed_toy_relay_codepipeline_exec_aws_iam_role_arn" {
   value = aws_iam_role.stuffed_toy_relay_codepipeline_exec.arn
 }
+
+# frontend
+output "stuffed_toy_frontend_codebuild_exec_aws_iam_role_arn" {
+  value = aws_iam_role.stuffed_toy_frontend_codebuild_exec.arn
+}
+output "stuffed_toy_frontend_codepipeline_exec_aws_iam_role_arn" {
+  value = aws_iam_role.stuffed_toy_frontend_codepipeline_exec.arn
+}

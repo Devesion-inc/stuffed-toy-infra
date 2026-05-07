@@ -96,6 +96,10 @@ module "stuffed_toy_iam_role" {
   stuffed_toy_relay_codepipeline_exec_aws_iam_policy_arn = module.stuffed_toy_iam_policy.stuffed_toy_relay_codepipeline_exec_aws_iam_policy_arn
   stuffed_toy_relay_ecs_exec_aws_iam_policy_arn          = module.stuffed_toy_iam_policy.stuffed_toy_relay_ecs_exec_aws_iam_policy_arn
   stuffed_toy_relay_ecs_task_aws_iam_policy_arn          = module.stuffed_toy_iam_policy.stuffed_toy_relay_ecs_task_aws_iam_policy_arn
+
+  # frontend
+  stuffed_toy_frontend_codebuild_exec_aws_iam_policy_arn    = module.stuffed_toy_iam_policy.stuffed_toy_frontend_codebuild_exec_aws_iam_policy_arn
+  stuffed_toy_frontend_codepipeline_exec_aws_iam_policy_arn = module.stuffed_toy_iam_policy.stuffed_toy_frontend_codepipeline_exec_aws_iam_policy_arn
 }
 
 module "stuffed_toy_cloudfront" {
@@ -111,6 +115,8 @@ module "stuffed_toy_cloudfront" {
 
   stuffed_toy_app_storage_aws_s3_bucket_id                   = module.stuffed_toy_s3_bucket.stuffed_toy_app_storage_aws_s3_bucket_id
   stuffed_toy_app_storage_aws_s3_bucket_regional_domain_name = module.stuffed_toy_s3_bucket.stuffed_toy_app_storage_aws_s3_bucket_regional_domain_name
+  stuffed_toy_frontend_aws_s3_bucket_id                      = module.stuffed_toy_s3_bucket.stuffed_toy_frontend_aws_s3_bucket_id
+  stuffed_toy_frontend_aws_s3_bucket_regional_domain_name    = module.stuffed_toy_s3_bucket.stuffed_toy_frontend_aws_s3_bucket_regional_domain_name
   stuffed_toy_app_cloudfront_log_aws_s3_bucket_arn           = module.stuffed_toy_s3_bucket.stuffed_toy_app_cloudfront_log_aws_s3_bucket_arn
 
   stuffed_toy_api_load_balancer_dns_name = module.stuffed_toy_lb.stuffed_toy_api_load_balancer_dns_name
@@ -198,6 +204,12 @@ module "stuffed_toy_codebuild" {
   stuffed_toy_api_codebuild_exec_aws_iam_role_arn         = module.stuffed_toy_iam_role.stuffed_toy_api_codebuild_exec_aws_iam_role_arn
   stuffed_toy_api_migrate_codebuild_exec_aws_iam_role_arn = module.stuffed_toy_iam_role.stuffed_toy_api_codebuild_exec_aws_iam_role_arn
   stuffed_toy_relay_codebuild_exec_aws_iam_role_arn       = module.stuffed_toy_iam_role.stuffed_toy_relay_codebuild_exec_aws_iam_role_arn
+
+  # frontend
+  stuffed_toy_frontend_codebuild_exec_aws_iam_role_arn = module.stuffed_toy_iam_role.stuffed_toy_frontend_codebuild_exec_aws_iam_role_arn
+  stuffed_toy_frontend_aws_s3_bucket_id                = module.stuffed_toy_s3_bucket.stuffed_toy_frontend_aws_s3_bucket_id
+  stuffed_toy_frontend_aws_cloudfront_distribution_id  = module.stuffed_toy_cloudfront.stuffed_toy_aws_cloudfront_distribution_id
+  stuffed_toy_aws_cloudfront_distribution_domain_name  = module.stuffed_toy_cloudfront.stuffed_toy_aws_cloudfront_distribution_domain_name
 }
 
 module "stuffed_toy_codedeploy" {
@@ -257,4 +269,10 @@ module "stuffed_toy_codepipeline" {
   ]
   stuffed_toy_relay_aws_codedeploy_app_name              = module.stuffed_toy_codedeploy.stuffed_toy_relay_aws_codedeploy_app_name
   stuffed_toy_relay_aws_codedeploy_deployment_group_name = module.stuffed_toy_codedeploy.stuffed_toy_relay_aws_codedeploy_deployment_group_name
+
+  # frontend
+  stuffed_toy_frontend_codepipeline_exec_aws_iam_role_arn = module.stuffed_toy_iam_role.stuffed_toy_frontend_codepipeline_exec_aws_iam_role_arn
+  stuffed_toy_frontend_github_repository                  = var.stuffed_toy_frontend_github_repository
+  stuffed_toy_frontend_codebuild_project_name             = module.stuffed_toy_codebuild.stuffed_toy_frontend_codebuild_project_name
+  stuffed_toy_frontend_build_aws_sns_topic_arn            = module.stuffed_toy_sns_topic.stuffed_toy_frontend_build_aws_sns_topic_arn
 }

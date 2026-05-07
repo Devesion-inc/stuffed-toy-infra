@@ -32,3 +32,11 @@ output "stuffed_toy_relay_ecs_exec_aws_iam_policy_arn" {
 output "stuffed_toy_relay_ecs_task_aws_iam_policy_arn" {
   value = aws_iam_policy.stuffed_toy_relay_ecs_task.arn
 }
+
+# frontend
+output "stuffed_toy_frontend_codebuild_exec_aws_iam_policy_arn" {
+  value = aws_iam_policy.stuffed_toy_frontend_codebuild_exec.arn
+}
+output "stuffed_toy_frontend_codepipeline_exec_aws_iam_policy_arn" {
+  value = aws_iam_policy.stuffed_toy_frontend_codepipeline_exec.arn
+}

@@ -52,3 +52,4 @@ variable "stuffed_toy_relay_ecs_max_capacity" {
 variable "codeconnection_arn" {}
 variable "stuffed_toy_api_github_repository" {}
 variable "stuffed_toy_relay_github_repository" {}
+variable "stuffed_toy_frontend_github_repository" {}

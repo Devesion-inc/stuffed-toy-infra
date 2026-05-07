@@ -45,6 +45,7 @@ stuffed_toy_relay_ecs_min_capacity            = 1
 stuffed_toy_relay_ecs_max_capacity            = 1
 
 # codepipeline
-codeconnection_arn                  = "arn:aws:codeconnections:us-east-1:364046406916:connection/16f8cf77-b40a-45ec-976d-9cd34687472e"
-stuffed_toy_api_github_repository   = "Devesion-inc/stuffed-toy-api"
-stuffed_toy_relay_github_repository = "Devesion-inc/stuffed-toy-relay"
+codeconnection_arn                     = "arn:aws:codeconnections:us-east-1:364046406916:connection/16f8cf77-b40a-45ec-976d-9cd34687472e"
+stuffed_toy_api_github_repository      = "Devesion-inc/stuffed-toy-api"
+stuffed_toy_relay_github_repository    = "Devesion-inc/stuffed-toy-relay"
+stuffed_toy_frontend_github_repository = "Devesion-inc/stuffed-toy-frontend"

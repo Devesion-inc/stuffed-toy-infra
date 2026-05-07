@@ -13,9 +13,13 @@ variable "stuffed_toy_aliases" {
 # WAF v2 Web ACL（us-east-1, scope=CLOUDFRONT）
 variable "stuffed_toy_app_cloudfront_aws_wafv2_web_acl_arn" {}
 
-# S3 (app_storage) - CloudFront のデフォルトオリジン
+# S3 (app_storage) - 任意の素材配信用
 variable "stuffed_toy_app_storage_aws_s3_bucket_id" {}
 variable "stuffed_toy_app_storage_aws_s3_bucket_regional_domain_name" {}
+
+# S3 (frontend) - CloudFront のデフォルトオリジン（静的サイト）
+variable "stuffed_toy_frontend_aws_s3_bucket_id" {}
+variable "stuffed_toy_frontend_aws_s3_bucket_regional_domain_name" {}
 
 # api ALB
 variable "stuffed_toy_api_load_balancer_dns_name" {}
