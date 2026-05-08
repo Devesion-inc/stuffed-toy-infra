@@ -44,4 +44,11 @@ resource "aws_db_parameter_group" "stuffed_toy" {
     value        = "pg_stat_statements"
     apply_method = "pending-reboot"
   }
+
+  # SSL/TLS 接続を強制（平文接続を拒否）
+  parameter {
+    name         = "rds.force_ssl"
+    value        = "1"
+    apply_method = "pending-reboot"
+  }
 }
