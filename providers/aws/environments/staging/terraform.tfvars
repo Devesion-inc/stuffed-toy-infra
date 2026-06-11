@@ -49,3 +49,10 @@ codeconnection_arn                     = "arn:aws:codeconnections:us-east-1:3640
 stuffed_toy_api_github_repository      = "Devesion-inc/stuffed-toy-api"
 stuffed_toy_relay_github_repository    = "Devesion-inc/stuffed-toy-relay"
 stuffed_toy_frontend_github_repository = "Devesion-inc/stuffed-toy-frontend"
+
+# tts (EC2)
+stuffed_toy_tts_instance_type = "g4dn.xlarge" # コスト重視 (NVIDIA T4, $0.526/h オンデマンド)
+stuffed_toy_tts_image_tag     = "latest"      # ECR の stuffed-toy-tts-staging からこのタグを pull
+
+# night-scaling
+stuffed_toy_night_scaling_enabled = true # 手動 start/stop で運用。true にすると JST 22-09 自動停止

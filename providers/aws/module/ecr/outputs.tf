@@ -42,3 +42,14 @@ output "stuffed_toy_relay_aws_ecr_repository_url" {
 output "stuffed_toy_relay_aws_ecr_repository_name" {
   value = aws_ecr_repository.stuffed_toy_relay.name
 }
+
+# tts (Aivis 音声エンジン)
+output "stuffed_toy_tts_aws_ecr_repository_arn" {
+  value = aws_ecr_repository.stuffed_toy_tts.arn
+}
+output "stuffed_toy_tts_aws_ecr_repository_url" {
+  value = aws_ecr_repository.stuffed_toy_tts.repository_url
+}
+output "stuffed_toy_tts_aws_ecr_repository_name" {
+  value = aws_ecr_repository.stuffed_toy_tts.name
+}

@@ -53,3 +53,16 @@ variable "codeconnection_arn" {}
 variable "stuffed_toy_api_github_repository" {}
 variable "stuffed_toy_relay_github_repository" {}
 variable "stuffed_toy_frontend_github_repository" {}
+
+# tts (EC2)
+variable "stuffed_toy_tts_instance_type" {
+  default = "g4dn.xlarge"
+}
+variable "stuffed_toy_tts_image_tag" {
+  default = "latest"
+}
+
+# night-scaling（EC2 自動停止/起動）
+variable "stuffed_toy_night_scaling_enabled" {
+  default = false # true で 22:00 JST 自動停止 / 09:00 JST 自動起動
+}

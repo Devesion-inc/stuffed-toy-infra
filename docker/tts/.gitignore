@@ -1,0 +1,5 @@
+# Aivis モデルファイル（大きいバイナリは git 管理外）
+*.aivmx
+
+# Docker build キャッシュ等
+.DS_Store

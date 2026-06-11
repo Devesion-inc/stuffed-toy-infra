@@ -164,6 +164,46 @@ module "stuffed_toy_sns_topic" {
   account_id            = var.account_id
 }
 
+module "stuffed_toy_tts" {
+  source = "../../module/tts"
+
+  env_value_environment = var.env_value_environment
+  account_id            = var.account_id
+  vpc_id                = var.vpc_id
+  subnet_id             = var.public_subnet_ids[0] # 単一 AZ 配置（GPU タイプは AZ 限定が多いため）
+
+  # ECR 経由で image pull（Docker Hub 不要）
+  ecr_repository_url = module.stuffed_toy_ecr.stuffed_toy_tts_aws_ecr_repository_url
+  image_tag          = var.stuffed_toy_tts_image_tag
+
+  # api / relay の ECS SG から TTS への通信のみ許可
+  allowed_security_group_ids = [
+    module.stuffed_toy_security_group.stuffed_toy_api_app_ecs_main_aws_security_group_id,
+    module.stuffed_toy_security_group.stuffed_toy_api_app_ecs_sub_aws_security_group_id,
+    module.stuffed_toy_security_group.stuffed_toy_relay_ecs_main_aws_security_group_id,
+    module.stuffed_toy_security_group.stuffed_toy_relay_ecs_sub_aws_security_group_id,
+  ]
+
+  instance_type = var.stuffed_toy_tts_instance_type
+}
+
+# 夜間停止モジュール（EC2 stop/start を Lambda + EventBridge で行う）
+# 対象インスタンスを追加したい場合は ec2_instance_ids に足す
+module "stuffed_toy_night_scaling" {
+  source = "../../module/night-scaling"
+
+  env_value_environment = var.env_value_environment
+
+  ec2_instance_ids = [
+    module.stuffed_toy_tts.stuffed_toy_tts_instance_id,
+  ]
+
+  # JST 12:00 起動 / JST 24:00 (= 翌 0:00) 停止
+  start_schedule     = "cron(0 3 * * ? *)"  # UTC 03:00 = JST 12:00
+  stop_schedule      = "cron(0 15 * * ? *)" # UTC 15:00 = JST 24:00
+  scheduling_enabled = var.stuffed_toy_night_scaling_enabled
+}
+
 module "stuffed_toy_ecs_service" {
   source = "../../module/ecs/service"
 

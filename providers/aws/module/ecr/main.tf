@@ -58,6 +58,18 @@ resource "aws_ecr_repository" "stuffed_toy_relay" {
   }
 }
 
+resource "aws_ecr_repository" "stuffed_toy_tts" {
+  name                 = "stuffed-toy-tts-${var.env_value_environment}"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+  encryption_configuration {
+    encryption_type = "AES256"
+  }
+}
+
 # 古いアプリ image を自動削除（直近 30 個保持）。コスト抑制。
 # ベース image は対象外（特定バージョンを長期保持するため）。
 
@@ -92,6 +104,27 @@ resource "aws_ecr_lifecycle_policy" "stuffed_toy_relay" {
           tagStatus   = "any"
           countType   = "imageCountMoreThan"
           countNumber = 30
+        }
+        action = {
+          type = "expire"
+        }
+      }
+    ]
+  })
+}
+
+# TTS image は大きい（CUDA + .aivmx）ので少なめに保持
+resource "aws_ecr_lifecycle_policy" "stuffed_toy_tts" {
+  repository = aws_ecr_repository.stuffed_toy_tts.name
+  policy = jsonencode({
+    rules = [
+      {
+        rulePriority = 1
+        description  = "Keep last 5 images"
+        selection = {
+          tagStatus   = "any"
+          countType   = "imageCountMoreThan"
+          countNumber = 5
         }
         action = {
           type = "expire"
