@@ -55,4 +55,4 @@ stuffed_toy_tts_instance_type = "g4dn.xlarge" # コスト重視 (NVIDIA T4, $0.5
 stuffed_toy_tts_image_tag     = "latest"      # ECR の stuffed-toy-tts-staging からこのタグを pull
 
 # night-scaling
-stuffed_toy_night_scaling_enabled = true # 手動 start/stop で運用。true にすると JST 22-09 自動停止
+stuffed_toy_night_scaling_enabled = true # true で JST 24:00 停止 / 12:00 起動

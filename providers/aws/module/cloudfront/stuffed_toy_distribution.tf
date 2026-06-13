@@ -112,6 +112,19 @@ resource "aws_cloudfront_distribution" "stuffed_toy" {
     response_headers_policy_id = aws_cloudfront_response_headers_policy.stuffed_toy_security_headers.id
   }
 
+  # /relay-ticket → relay ALB（WebSocket 接続用の短期チケット発行 / POST）
+  ordered_cache_behavior {
+    path_pattern               = "/relay-ticket"
+    allowed_methods            = ["HEAD", "DELETE", "POST", "GET", "OPTIONS", "PUT", "PATCH"]
+    cached_methods             = ["GET", "HEAD"]
+    target_origin_id           = "stuffed-toy-relay-elb-${var.env_value_environment}"
+    cache_policy_id            = data.aws_cloudfront_cache_policy.caching_disabled.id
+    origin_request_policy_id   = data.aws_cloudfront_origin_request_policy.all_viewer.id
+    compress                   = false
+    viewer_protocol_policy     = "redirect-to-https"
+    response_headers_policy_id = aws_cloudfront_response_headers_policy.stuffed_toy_security_headers.id
+  }
+
   # /ws/* → relay ALB（WebSocket）
   ordered_cache_behavior {
     path_pattern             = "/ws/*"

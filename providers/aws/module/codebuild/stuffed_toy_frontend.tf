@@ -4,6 +4,7 @@
 #   - FRONTEND_BUCKET
 #   - DISTRIBUTION_ID
 #   - NEXT_PUBLIC_REALTIME_RELAY_URL（ブラウザ→relay の WebSocket 接続先）
+#   - NEXT_PUBLIC_RELAY_TICKET_URL（ブラウザ→relay のチケット発行 HTTP 先）
 
 resource "aws_codebuild_project" "stuffed_toy_frontend" {
   name         = "stuffed-toy-frontend-${var.env_value_environment}-build-project"
@@ -48,6 +49,12 @@ resource "aws_codebuild_project" "stuffed_toy_frontend" {
     environment_variable {
       name  = "NEXT_PUBLIC_REALTIME_RELAY_URL"
       value = "wss://${var.stuffed_toy_aws_cloudfront_distribution_domain_name}/ws/realtime-transcribe"
+      type  = "PLAINTEXT"
+    }
+
+    environment_variable {
+      name  = "NEXT_PUBLIC_RELAY_TICKET_URL"
+      value = "https://${var.stuffed_toy_aws_cloudfront_distribution_domain_name}/relay-ticket"
       type  = "PLAINTEXT"
     }
   }
