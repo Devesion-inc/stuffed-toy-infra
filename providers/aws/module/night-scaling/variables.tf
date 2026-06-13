@@ -7,14 +7,19 @@ variable "ec2_instance_ids" {
   default = []
 }
 
-# 停止スケジュール（UTC cron）。例: "cron(0 13 * * ? *)" = JST 22:00
-variable "stop_schedule" {
-  default = "cron(0 13 * * ? *)"
+# スケジュールのタイムゾーン（EventBridge Scheduler がネイティブ対応）
+variable "schedule_timezone" {
+  default = "Asia/Tokyo"
 }
 
-# 起動スケジュール（UTC cron）。例: "cron(0 0 * * ? *)" = JST 09:00
+# 停止スケジュール（schedule_timezone のローカル時刻 cron）。例: "cron(0 22 * * ? *)" = JST 22:00
+variable "stop_schedule" {
+  default = "cron(0 22 * * ? *)"
+}
+
+# 起動スケジュール（schedule_timezone のローカル時刻 cron）。例: "cron(0 9 * * ? *)" = JST 09:00
 variable "start_schedule" {
-  default = "cron(0 0 * * ? *)"
+  default = "cron(0 9 * * ? *)"
 }
 
 # EventBridge スケジュールの自動実行を有効化するか

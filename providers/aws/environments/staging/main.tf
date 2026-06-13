@@ -198,9 +198,9 @@ module "stuffed_toy_night_scaling" {
     module.stuffed_toy_tts.stuffed_toy_tts_instance_id,
   ]
 
-  # JST 12:00 起動 / JST 24:00 (= 翌 0:00) 停止
-  start_schedule     = "cron(0 3 * * ? *)"  # UTC 03:00 = JST 12:00
-  stop_schedule      = "cron(0 15 * * ? *)" # UTC 15:00 = JST 24:00
+  # JST 24:00 (= 翌 0:00) 停止 / JST 10:00 起動（schedule_timezone = Asia/Tokyo）
+  start_schedule     = "cron(0 10 * * ? *)" # JST 10:00
+  stop_schedule      = "cron(0 0 * * ? *)"  # JST 0:00 (= 24:00)
   scheduling_enabled = var.stuffed_toy_night_scaling_enabled
 }
 

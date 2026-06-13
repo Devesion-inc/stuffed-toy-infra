@@ -55,47 +55,43 @@ resource "aws_lambda_function" "stuffed_toy_night_scaling_stop" {
 }
 
 # =============================================================================
-# EventBridge スケジュール（任意。scheduling_enabled = true で有効化）
+# EventBridge Scheduler（任意。scheduling_enabled = true で有効化）
+# 旧 EventBridge Rules から移行。タイムゾーンを直接指定できるため
+# cron は JST のまま記述でき、UTC 変換が不要。
 # =============================================================================
 
-resource "aws_cloudwatch_event_rule" "stuffed_toy_night_scaling_start" {
-  name                = "stuffed-toy-night-scaling-start-${var.env_value_environment}"
-  description         = "Auto-start EC2 instances"
-  schedule_expression = var.start_schedule
-  state               = var.scheduling_enabled ? "ENABLED" : "DISABLED"
+resource "aws_scheduler_schedule" "stuffed_toy_night_scaling_start" {
+  name        = "stuffed-toy-night-scaling-start-${var.env_value_environment}"
+  description = "Auto-start EC2 instances"
+  state       = var.scheduling_enabled ? "ENABLED" : "DISABLED"
+
+  flexible_time_window {
+    mode = "OFF"
+  }
+
+  schedule_expression          = var.start_schedule
+  schedule_expression_timezone = var.schedule_timezone
+
+  target {
+    arn      = aws_lambda_function.stuffed_toy_night_scaling_start.arn
+    role_arn = aws_iam_role.stuffed_toy_night_scaling_scheduler.arn
+  }
 }
 
-resource "aws_cloudwatch_event_target" "stuffed_toy_night_scaling_start" {
-  rule      = aws_cloudwatch_event_rule.stuffed_toy_night_scaling_start.name
-  target_id = "stuffed-toy-night-scaling-start"
-  arn       = aws_lambda_function.stuffed_toy_night_scaling_start.arn
-}
+resource "aws_scheduler_schedule" "stuffed_toy_night_scaling_stop" {
+  name        = "stuffed-toy-night-scaling-stop-${var.env_value_environment}"
+  description = "Auto-stop EC2 instances"
+  state       = var.scheduling_enabled ? "ENABLED" : "DISABLED"
 
-resource "aws_lambda_permission" "stuffed_toy_night_scaling_start" {
-  statement_id  = "AllowExecutionFromEventBridgeStart"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.stuffed_toy_night_scaling_start.function_name
-  principal     = "events.amazonaws.com"
-  source_arn    = aws_cloudwatch_event_rule.stuffed_toy_night_scaling_start.arn
-}
+  flexible_time_window {
+    mode = "OFF"
+  }
 
-resource "aws_cloudwatch_event_rule" "stuffed_toy_night_scaling_stop" {
-  name                = "stuffed-toy-night-scaling-stop-${var.env_value_environment}"
-  description         = "Auto-stop EC2 instances"
-  schedule_expression = var.stop_schedule
-  state               = var.scheduling_enabled ? "ENABLED" : "DISABLED"
-}
+  schedule_expression          = var.stop_schedule
+  schedule_expression_timezone = var.schedule_timezone
 
-resource "aws_cloudwatch_event_target" "stuffed_toy_night_scaling_stop" {
-  rule      = aws_cloudwatch_event_rule.stuffed_toy_night_scaling_stop.name
-  target_id = "stuffed-toy-night-scaling-stop"
-  arn       = aws_lambda_function.stuffed_toy_night_scaling_stop.arn
-}
-
-resource "aws_lambda_permission" "stuffed_toy_night_scaling_stop" {
-  statement_id  = "AllowExecutionFromEventBridgeStop"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.stuffed_toy_night_scaling_stop.function_name
-  principal     = "events.amazonaws.com"
-  source_arn    = aws_cloudwatch_event_rule.stuffed_toy_night_scaling_stop.arn
+  target {
+    arn      = aws_lambda_function.stuffed_toy_night_scaling_stop.arn
+    role_arn = aws_iam_role.stuffed_toy_night_scaling_scheduler.arn
+  }
 }
