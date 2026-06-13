@@ -4,6 +4,7 @@ resource "aws_security_group" "stuffed_toy_db" {
   description = "stuffed-toy db rds security group"
   vpc_id      = var.vpc_id
 
+  # relay は DB に直接接続しないため api ECS のみ許可
   ingress {
     from_port = 5432
     to_port   = 5432
@@ -11,8 +12,6 @@ resource "aws_security_group" "stuffed_toy_db" {
     security_groups = [
       aws_security_group.stuffed_toy_api_app_ecs_main.id,
       aws_security_group.stuffed_toy_api_app_ecs_sub.id,
-      aws_security_group.stuffed_toy_relay_ecs_main.id,
-      aws_security_group.stuffed_toy_relay_ecs_sub.id,
     ]
   }
 
@@ -23,15 +22,11 @@ resource "aws_security_group" "stuffed_toy_db" {
     security_groups = [
       aws_security_group.stuffed_toy_api_app_ecs_main.id,
       aws_security_group.stuffed_toy_api_app_ecs_sub.id,
-      aws_security_group.stuffed_toy_relay_ecs_main.id,
-      aws_security_group.stuffed_toy_relay_ecs_sub.id,
     ]
   }
 
   depends_on = [
     aws_security_group.stuffed_toy_api_app_ecs_main,
     aws_security_group.stuffed_toy_api_app_ecs_sub,
-    aws_security_group.stuffed_toy_relay_ecs_main,
-    aws_security_group.stuffed_toy_relay_ecs_sub,
   ]
 }
